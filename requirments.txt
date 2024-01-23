@@ -1,0 +1,5 @@
+boto3>=1.16.13
+requests>=2.24.0
+Flask
+requests
+subprocess
