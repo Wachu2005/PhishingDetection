@@ -3,6 +3,7 @@ import requests
 import subprocess
 import json
 import re
+import os
 
 app = Flask(__name__)
 
@@ -56,14 +57,23 @@ def get_model_response(user_input):
     response = requests.post(api_url, headers=headers, json={"inputs": user_input})
     model_response = response.json()
     print(model_response)
-    return convert_to_simple_text_class(model_response[0])
+    try:
+        response = convert_to_simple_text_class(model_response[0])
+    except:
+        return model_response
+    return response
 
 def run_pyopdb_script(url):
+
     command = ['python', 'pyopdb.py', '--checkurl', url]
+
+    # Run the subprocess as before
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     output, error = process.communicate()
+
     if error:
         return {'success': False, 'error': error.strip()}
+
     try:
         return json.loads(output)
     except json.JSONDecodeError:
